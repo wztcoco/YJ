@@ -57,7 +57,7 @@ var vm = new Vue({
         enrollDetail: function (id) {
             console.log(id);
             localStorage.setItem('lectureId', id);
-            location.href('http://127.0.0.1:8880/html/chair');
+            location.replace('http://127.0.0.1:8882/html/chair');
         }
     }
 
