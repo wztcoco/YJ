@@ -1,0 +1,4 @@
+sequelize-auto -h 116.62.156.102 -d py_worm -u py_work -x py123 -p 3306 -e mysql -a sequelize_config.json -t py_second_house
+
+
+sequelize-auto -o "./model" -d gs -h rm-bp1if8r19l8p05ns7do.mysql.rds.aliyuncs.com -u nygma_root -p 3306 -x Rax147852369 -e mysql -a sequelize_config.json
