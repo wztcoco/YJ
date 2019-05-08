@@ -103,7 +103,18 @@ module.exports = appInfo => {
       '.xlsx',
     ],
   };
-
+    config.view = {
+        //配置多个 view 目录
+        root: [
+            path.join(appInfo.baseDir, 'app/view'),
+            path.join(appInfo.baseDir, 'app/public'),
+        ].join(','),
+        defaultViewEngine: 'ejs',
+        defaultExtension: '.html',
+        mapping: {
+            '.ejs': 'ejs',
+        },
+    };
 
   // add your user config here
   const userConfig = {
@@ -114,4 +125,6 @@ module.exports = appInfo => {
     ...config,
     ...userConfig,
   };
+
+
 };

@@ -6,4 +6,7 @@
 module.exports = app => {
   const { router, controller } = app;
   router.post('/front/api/:subclass/:fun', controller.front.index.home);
+  require('./router/chair')(app);
+  require('./router/build')(app);
+  require('./router/index')(app);
 };

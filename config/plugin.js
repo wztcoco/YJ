@@ -18,5 +18,11 @@ module.exports = {
   knex: {
     enable: true,
     package: 'egg-knex',
+  },
+  ejs: {
+    enable: true,
+    package: 'egg-view-ejs',
   }
 };
+
+
