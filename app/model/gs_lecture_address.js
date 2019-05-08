@@ -21,6 +21,10 @@ module.exports = app => {
     detailedAddress: {
       type: DataTypes.STRING(255),
       allowNull: false
+    },
+    schoolName: {
+      type: DataTypes.STRING(255),
+      allowNull: false
     }
   }, {
     tableName: 'gs_lecture_address',

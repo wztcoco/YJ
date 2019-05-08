@@ -57,6 +57,15 @@ module.exports = app => {
     ticketPrice: {
       type: DataTypes.STRING(100),
       allowNull: false
+    },
+    lectureStatus: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      defaultValue: '1'
+    },
+    lectureAddressId: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false
     }
   }, {
     tableName: 'gs_lecture',

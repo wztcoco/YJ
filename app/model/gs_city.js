@@ -1,7 +1,6 @@
 /* indent size: 2 */
 
 module.exports = app => {
-  //这是注释
   const DataTypes = app.Sequelize;
 
   const Model = app.model.define('gs_city', {

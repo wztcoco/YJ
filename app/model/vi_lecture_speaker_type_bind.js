@@ -72,6 +72,31 @@ module.exports = app => {
     createTime: {
       type: DataTypes.DATE,
       allowNull: false
+    },
+    lectureStatus: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      defaultValue: '1'
+    },
+    lectureAddressId: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false
+    },
+    cityCode: {
+      type: DataTypes.STRING(6),
+      allowNull: true
+    },
+    townCode: {
+      type: DataTypes.STRING(6),
+      allowNull: true
+    },
+    detailedAddress: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    schoolName: {
+      type: DataTypes.STRING(255),
+      allowNull: true
     }
   }, {
     tableName: 'vi_lecture_speaker_type_bind',
