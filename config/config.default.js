@@ -23,7 +23,7 @@ module.exports = appInfo => {
   // 端口号
   config.cluster = {
     listen: {
-      port: 7777,
+      port: 6666,
     },
     workers:1
   };
