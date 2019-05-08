@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>研讲</title>
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .yj-chair-poster {
+      width: 100%;
+    }
+
+    .yj-chair-detail-title {
+      padding-top: 30px;
+      padding-bottom: 30px;
+      width: 100%;
+      display: block;
+    }
+
+    .yj-chair-ticket-title {
+      line-height: 30px;
+      display: inline-block;
+    }
+
+    .yj-chair-ticket {
+      padding-top: 30px;
+      padding-bottom: 30px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 30px;
+      text-align: center;
+    }
+
+    .yj-chair-ticket-img {
+      vertical-align: middle;
+      height: 100%;
+      display: inline-block
+    }
+
+    .el-icon-date {
+      display: block;
+      text-align: center
+    }
+
+    .yj-chair-detail-h {
+      min-height: 300px;
+    }
+
+    .yj-chair-bar {
+      width: 100%;
+      text-align: center;
+      padding: 30px 0px
+    }
+
+    .yj-chair-ibar-left {
+      width: 50%;
+      float: right;
+    }
+
+    .yj-chair-ibar-right {
+      width: 50%;
+      float: left;
+    }
+
+    .yj-chair-intro {
+      font-size: 14px;
+      font-weight: 400;
+      color: #303133;
+      padding: 0 10%;
+      text-indent: 2em;
+    }
+
+    .yj-chair-container {
+      margin: 0 15%;
+      background-color: #fafafa;
+      padding-bottom: 15px;
+    }
+
+    .yj-chair-ticket-container {
+      margin: 0 15%;
+      padding-bottom: 30px;
+    }
+
+    .yj-chair-guest {
+      padding: 0 10%;
+    }
+
+    .yj-chair-guest-box {
+      width: 100%;
+    }
+
+    .yj-chair-guest-detail {
+      padding: 10px 0 0 2em
+    }
+
+    .yj-chair-guest-img {
+      width: 100%;
+    }
+
+    .yj-chair-guest-intro {
+      font-size: 14px;
+      font-weight: 400;
+      color: #303133;
+    }
+
+    .yj-chair-guest-name {
+      font-size: 18px;
+    }
+
+    .yj-chair-guest-institute {
+      font-size: 16px;
+    }
+
+    .yj-chair-time {
+      padding: 15px 0;
+    }
+
+    .yj-chair-ticket-state {
+      font-size: 12px;
+      color: #999999;
+      padding: 5px;
+    }
+
+    .yj-chair-ticket-price {
+      color: #e57470;
+      font-size: 24px;
+      font-weight: bold;
+      float: right;
+      padding: 5px 30px 0 0;
+    }
+
+    .yj-chair-sponser {
+      padding: 10px;
+      text-align: center;
+      color: #ffffff
+    }
+
+    .yj-chair-sponser-img {
+      margin: 0 auto;
+      display: block;
+      padding-bottom: 30px
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" @select="handleSelect"
+      background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+      <el-menu-item index="1">主页</el-menu-item>
+      <el-submenu index="2">
+        <template slot="title">不想被针队</template>
+        <el-menu-item index="2-1">选项1</el-menu-item>
+        <el-menu-item index="2-2">选项2</el-menu-item>
+        <el-menu-item index="2-3">选项3</el-menu-item>
+        <el-submenu index="2-4">
+          <template slot="title">选项4</template>
+          <el-menu-item index="2-4-1">选项1</el-menu-item>
+          <el-menu-item index="2-4-2">选项2</el-menu-item>
+          <el-menu-item index="2-4-3">选项3</el-menu-item>
+        </el-submenu>
+      </el-submenu>
+
+      <el-menu-item index="3"><i class="el-icon-message"></i>消息中心</el-menu-item>
+    </el-menu>
+    <img class="yj-chair-poster" :src="lectureData.posterImg">
+    <div class="yj-chair-detail-title">
+      <i class="el-icon-date"> 讲座详情</i>
+    </div>
+    <div class="yj-chair-container">
+      <div class="yj-chair-bar">
+        <el-row>
+          <el-col :span="10">
+            <div class="grid-content bg-purple">
+              <img class="yj-chair-ibar-left" src="../images/lineLeft.png">
+            </div>
+          </el-col>
+          <el-col :span="4">
+            <div class="grid-content bg-purple-light">讲座介绍</div>
+          </el-col>
+          <el-col :span="10">
+            <div class="grid-content bg-purple">
+              <img class="yj-chair-ibar-right" src="../images/lineRight.png">
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="yj-chair-intro">
+        {{lectureData.introduction}}
+      </div>
+      <div class="yj-chair-bar">
+        <el-row>
+          <el-col :span="10">
+            <div class="grid-content bg-purple">
+              <img class="yj-chair-ibar-left" src="../images/lineLeft.png">
+            </div>
+          </el-col>
+          <el-col :span="4">
+            <div class="grid-content bg-purple-light">演讲嘉宾</div>
+          </el-col>
+          <el-col :span="10">
+            <div class="grid-content bg-purple">
+              <img class="yj-chair-ibar-right" src="../images/lineRight.png">
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="yj-chair-guest">
+        <div class="yj-chair-guest-box">
+          <el-row>
+            <el-col :span="4">
+              <div class="grid-content bg-purple">
+                <img class="yj-chair-guest-img" :src="lectureData.speakerImg">
+              </div>
+            </el-col>
+            <el-col :span="20">
+              <div class="grid-content bg-purple">
+                <div class="yj-chair-guest-detail">
+                  <div class="yj-chair-guest-name">
+                    {{lectureData.speakerName}}
+                  </div>
+                  <div class="yj-chair-guest-institute">
+                    
+                  </div>
+                  <div class="yj-chair-guest-intro">
+                    {{lectureData.speakerIntroduction}}
+                  </div>
+                </div>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+      </div>
+      <div class="yj-chair-bar">
+        <el-row>
+          <el-col :span="10">
+            <div class="grid-content bg-purple">
+              <img class="yj-chair-ibar-left" src="../images/lineLeft.png">
+            </div>
+          </el-col>
+          <el-col :span="4">
+            <div class="grid-content bg-purple-light">讲座流程</div>
+          </el-col>
+          <el-col :span="10">
+            <div class="grid-content bg-purple">
+              <img class="yj-chair-ibar-right" src="../images/lineRight.png">
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="block yj-chair-guest">
+        <div class="radio yj-chair-time">
+          排序：
+          <el-radio-group v-model="reverse">
+            <el-radio :label="false">正序</el-radio>
+            <el-radio :label="true">倒序</el-radio>
+          </el-radio-group>
+        </div>
+
+        <el-timeline :reverse="reverse">
+          <el-timeline-item v-for="(activity, index) in activities" :key="index" :timestamp="activity.processTime"
+            placement="top">
+            <el-card>
+              <p>{{activity.content}}</p>
+            </el-card>
+          </el-timeline-item>
+          </el-timeline-item>
+        </el-timeline>
+      </div>
+    </div>
+    <div class="yj-chair-ticket">
+      <img class="yj-chair-ticket-img" src="../images/ticket.png">
+      <div class="yj-chair-ticket-title">讲座门票</div>
+    </div>
+    <div class="yj-chair-ticket-container">
+      <template>
+        <el-table :data="tableData" style="width: 100%">
+          <el-table-column prop="id" label="ID" type="index" width="60">
+          </el-table-column>
+          <el-table-column prop="name" label="门票名称">
+          </el-table-column>
+          <el-table-column prop="price" label="单价(¥)">
+          </el-table-column>
+          </el-table-column>
+          <el-table-column prop="restNum" label="剩余票数">
+          </el-table-column>
+          <el-table-column prop="time" label="截止时间">
+          </el-table-column>
+          <el-table-column prop="amount" width="60" label="">
+            <template slot-scope="scope">
+              <el-button size="mini" @click="handleSub(scope.row)">-</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column prop="amount" width="50" label="数量">
+          </el-table-column>
+          <el-table-column prop="amount" label="" width="60">
+            <template slot-scope="scope">
+              <el-button size="mini" type="danger" @click="handleAdd(scope.row)">+</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+      <div>
+        <div class="yj-chair-ticket-state">退款说明: 不支持退票</div>
+        <div style="height:30px">
+          <el-button type="danger" style="float:right" @click="handlePay()">支付订单</el-button>
+          <div class="yj-chair-ticket-price">¥ {{sum}}</div>
+        </div>
+      </div>
+    </div>
+    <div style="background-color: #545c64">
+      <div class="yj-chair-sponser">活动主办方</div>
+      <img class="yj-chair-sponser-img" src="../images/zust.png">
+    </div>
+  </div>
+  <script src="../js/chair.js"></script>
+</body>
+
+
+</html>
