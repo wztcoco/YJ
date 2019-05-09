@@ -365,6 +365,7 @@ class LectureService extends Service {
         let targetPath = moment().format('YYYYMMDDHHmmssSSSS_') + userId + extName;
         console.log('direname======='+__dirname);
         let finalPath =__dirname+ `/../../../public/images/${dirName}/${targetPath}`;
+        console.log('aaaaa'+finalPath);
         try{
             console.log(filePath);
             fs.rename(filePath, finalPath,function (error) {

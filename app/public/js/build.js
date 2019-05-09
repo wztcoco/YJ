@@ -46,13 +46,13 @@ var postLecture = function (vmObj) {
 		"townCode":vmObj.lectureTown,
 		"detailedAddress":vmObj.ruleForm.detailArea,
 		"lectureTypeId":vmObj.ruleForm.lectureType,
-		"posterImg":vmObj.posterImg,
-		"coverImg":vmObj.coverImg,
+		"posterImg":vmObj.posterImgs,
+		"coverImg":vmObj.coverImgs,
 		"introduction":vmObj.lectureDetail,
 		"speakerInfo":{
 			"speakerName":vmObj.speakerInfo,
 			"speakerIntroduction":vmObj.lectureSpeaker,
-			"coverImg":vmObj.speakerImg
+			"coverImg":vmObj.speakerImgs
 		},
 		"tagArr":vmObj.tagArr,
 		"ticketArr":vmObj.ticketArr,
@@ -79,6 +79,9 @@ var vm = new Vue({
         posterImg: '',
         coverImg:'',
         speakerImg:'',
+        posterImgs: '',
+        coverImgs:'',
+        speakerImgs:'',
         chairName: '',
         activeIndex2: '1',
         townList: [],
@@ -163,12 +166,15 @@ var vm = new Vue({
         },
         handleAvatarSuccess1(res, file) {
             this.posterImg = URL.createObjectURL(file.raw);
+            this.posterImgs = res.obj.imgUrl;
         },
         handleAvatarSuccess2(res, file) {
             this.coverImg = URL.createObjectURL(file.raw);
+            this.coverImgs = res.obj.imgUrl;
         },
         handleAvatarSuccess3(res, file) {
             this.speakerImg = URL.createObjectURL(file.raw);
+            this.speakerImgs = res.obj.imgUrl;
         },
         beforeAvatarUpload(file) {
             const isJPG = file.type === 'image/jpeg';
@@ -216,7 +222,7 @@ var vm = new Vue({
         },
         saveLecture() {
             var that=this;
-            this.$confirm('确认买票?', '提示', {
+            this.$confirm('确认发布?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
