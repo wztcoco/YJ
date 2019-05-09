@@ -364,12 +364,17 @@ class LectureService extends Service {
         let filePath = file.filepath;
         let targetPath = moment().format('YYYYMMDDHHmmssSSSS_') + userId + extName;
         console.log('direname======='+__dirname);
-        let finalPath =__dirname+ `/../../../public/images/${dirName}/${targetPath}`;
+        let finalPath =__dirname+ `/../../public/images/${dirName}/${targetPath}`;
         try{
             console.log(filePath);
+            console.log(finalPath);
             fs.rename(filePath, finalPath,function (error) {
                 if(error){
+                    console.log(error);
                     return ctx.helper.getApiResult(constant.apiCode.serviceError, '内部错误', error);
+                }
+                else{
+                    console.log("well done")
                 }
             });
             return ctx.helper.getApiResult(constant.apiCode.normal, '上传成功', {imgUrl: `http://www.mastercoco.com:7777/public/images/${dirName}/${targetPath}`});
