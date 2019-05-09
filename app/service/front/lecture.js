@@ -5,8 +5,11 @@ const constant = require('../../constant');
 const md5 = require('js-md5');
 const Sequelize = require('sequelize');
 const underscore = require('underscore');
-const GsLecture = require('../../model/gs_lecture');
+const promise = require('bluebird');
+const formidable = require('formidable');
+const path = require('path');
 const moment = require('moment');
+const fs = require('fs');
 
 class LectureService extends Service {
     //获取讲座详情
@@ -90,6 +93,10 @@ class LectureService extends Service {
             raw: true,
             order: [['participateTime', 'DESC']]
         };
+        if (pageIndex === 0 && pageSize === 0) {
+            delete searchObj.limit;
+            delete searchObj.offset;
+        }
         if (today == 0) {
             delete searchObj.where.participateTime;
         }
@@ -269,32 +276,37 @@ class LectureService extends Service {
         const ctx = this.ctx;
         const {cityCode} = params;
         const searchTownList = await ctx.model.ViCityTownBind.findAll({
-            attributes: ['areaName', 'areaCode'],
+            attributes: ['areaName', ['areaCode','townCode']],
             where: {
                 cityCode: cityCode
             }
         });
-        return ctx.helper.getApiResult(constant.apiCode.normal, '获取城市列表成功', searchTownList);
+        return ctx.helper.getApiResult(constant.apiCode.normal, '获取乡镇列表成功', searchTownList);
     }
 
     //获取学校列表
     async getSchoolList(params) {
         const ctx = this.ctx;
-        const {cityCode} = params;
-        const searchTownList = await ctx.model.GsLectureAddress.findAll({
+        const {townCode='0'} = params;
+        //设定搜索条件对象
+        const searchObj={
             attributes: ['schoolName', 'lectureAddressId'],
             group: 'schoolName',
             where: {
-                cityCode: cityCode
+                townCode: townCode
             }
-        });
-        return ctx.helper.getApiResult(constant.apiCode.normal, '获取城市列表成功', searchTownList);
+        };
+        if(townCode==='0'){
+            delete searchObj.where.townCode;
+        }
+        const searchTownList = await ctx.model.GsLectureAddress.findAll(searchObj);
+        return ctx.helper.getApiResult(constant.apiCode.normal, '获取学校列表成功', searchTownList);
     }
 
     //获取讲座列表(高级筛选)
     async getLectureListAdvanced(params) {
         const ctx = this.ctx;
-        const {keyword = "", pageIndex = 1, pageSize = 30, startTime = 0, endTime = 0, lectureTypeId = 0, townCode = 0, schoolName = ""} = params;
+        const {keyword = "", pageIndex = 1, pageSize = 30, startTime = "0", endTime = "0", lectureTypeId = 0, townCode = "0", schoolName = ""} = params;
         const searchObj = {
             where: {
                 lectureName: {$like: '%' + keyword + '%'},
@@ -308,20 +320,24 @@ class LectureService extends Service {
             raw: true,
             order: [['participateTime', 'DESC']]
         };
+        if (pageIndex === 0 && pageSize === 0) {
+            delete searchObj.limit;
+            delete searchObj.offset;
+        }
         //讲座类型筛选
         if (lectureTypeId !== 0) {
-            searchObj.where.lectureTypeId=lectureTypeId;
+            searchObj.where.lectureTypeId = lectureTypeId;
         }
         //讲座区域筛选
-        if(townCode!==0){
-            searchObj.where.townCode=townCode;
+        if (townCode != "0") {
+            searchObj.where.townCode = townCode;
         }
         //讲座学校名称筛选
-        if(schoolName!==""){
-            searchObj.where.schoolName=schoolName;
+        if (schoolName !== ""&&schoolName !== "不限") {
+            searchObj.where.schoolName = schoolName;
         }
         //讲座日期筛选
-        if (startTime === 0 && endTime === 0) {
+        if (startTime === "0" && endTime === "0") {
             delete searchObj.where.participateTime;
         }
         const searchLectureList = await ctx.model.ViLectureSpeakerTypeBind.findAndCountAll(searchObj);
@@ -335,6 +351,27 @@ class LectureService extends Service {
         responseObj.total = searchLectureList.count;
         return ctx.helper.getApiResult(constant.apiCode.normal, '查询列表成功', responseObj);
 
+    }
+    //图片上传
+    uploadCommonImg() {
+
+        const ctx=this.ctx;
+        const file = ctx.request.files[0];
+        console.log(file);
+        const dirName=ctx.request.body.dirName;
+        const userId=ctx.request.body.userId;
+        const extName=path.extname(file.filename);
+        let filePath = file.filepath;
+        let targetPath = moment().format('YYYYMMDDHHmmssSSSS_') + userId + extName;
+
+        let finalPath =__dirname+ `../../../public/images/${dirName}/${targetPath}`;
+        try{
+            fs.rename(filePath, finalPath);
+            return ctx.helper.getApiResult(constant.apiCode.normal, '上传成功', {imgUrl: `http://www.mastercoco.com:7777/public/images/${dirName}/${targetPath}`});
+        }catch(err){
+            console.log(error);
+            return ctx.helper.getApiResult(constant.apiCode.serviceError, '内部错误', error);
+        }
     }
 }
 
