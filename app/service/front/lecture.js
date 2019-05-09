@@ -370,8 +370,8 @@ class LectureService extends Service {
             fs.rename(filePath, finalPath);
             return ctx.helper.getApiResult(constant.apiCode.normal, '上传成功', {imgUrl: `http://www.mastercoco.com:7777/public/images/${dirName}/${targetPath}`});
         }catch(err){
-            console.log(error);
-            return ctx.helper.getApiResult(constant.apiCode.serviceError, '内部错误', error);
+            console.log(err);
+            return ctx.helper.getApiResult(constant.apiCode.serviceError, '内部错误', err);
         }
     }
 }

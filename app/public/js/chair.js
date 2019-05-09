@@ -2,7 +2,7 @@ var lectureId = localStorage.getItem('lectureId')||'1';
 var userId = '1';
 
 var instance = axios.create({
-    baseURL:'http://www.mastercoco.com:7777/front/api/',
+    baseURL:'/front/api/',
     timeout:1000,
     headers:{'content-type': 'application/json'}
 });
@@ -143,7 +143,7 @@ var vm = new Vue({
         },
         handlePay:function(){
             var that=this;
-            this.$confirm('确认买票?', '提示', {
+            this.$confirm('确认发布?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'

@@ -1,5 +1,5 @@
 var instance = axios.create({
-    baseURL:'http://www.mastercoco.com:7777/front/api/',
+    baseURL:'/front/api/',
     timeout:1000,
     headers:{'content-type': 'application/json'}
 });
