@@ -363,7 +363,7 @@ class LectureService extends Service {
         const extName=path.extname(file.filename);
         let filePath = file.filepath;
         let targetPath = moment().format('YYYYMMDDHHmmssSSSS_') + userId + extName;
-        console.log('direname======='+__dirname);
+
         let finalPath =__dirname+ `/../../public/images/${dirName}/${targetPath}`;
         try{
             console.log(filePath);

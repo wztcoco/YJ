@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>研讲</title>
+    <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="container">
+    <el-menu :default-active="activeIndex2" @select="handleSelect" active-text-color="#ffd04b"
+             background-color="#545c64"
+             class="el-menu-demo" mode="horizontal" text-color="#fff">
+        <el-menu-item index="1">主页</el-menu-item>
+        <el-submenu index="2">
+            <template slot="title">不想被针队</template>
+            <el-menu-item index="2-1">选项1</el-menu-item>
+            <el-menu-item index="2-2">选项2</el-menu-item>
+            <el-menu-item index="2-3">选项3</el-menu-item>
+            <el-submenu index="2-4">
+                <template slot="title">选项4</template>
+                <el-menu-item index="2-4-1">选项1</el-menu-item>
+                <el-menu-item index="2-4-2">选项2</el-menu-item>
+                <el-menu-item index="2-4-3">选项3</el-menu-item>
+            </el-submenu>
+        </el-submenu>
+        <el-menu-item index="3">
+            <i class="el-icon-message"></i>
+            消息中心
+        </el-menu-item>
+        <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
+    </el-menu>
+    <div class="block">
+        <el-carousel height="400px" trigger="click">
+            <el-carousel-item :key="index" v-for="item,index in backgroundArray">
+                <img :src="item.url" style="height: 100%" width="100%">
+            </el-carousel-item>
+        </el-carousel>
+    </div>
+    <div class="screen">
+        <div class="screen-line">
+            <div style="display: flex">
+                <el-tag>讲座类型</el-tag>
+                <div style="margin-left: 15px">
+                    <div :key="index" class="mul-button"
+                         :class="{'mul-button-active': (isActive1 == index) }"
+                         @click="tagSelect1(item,index)"
+                         v-for="item,index in lectureTypeArray">{{item.lectureTypeName}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="screen-line">
+            <div style="display: flex">
+                <el-tag>选择区域</el-tag>
+                <div style="margin-left: 15px">
+                    <div :key="index" class="mul-button"
+                         :class="{'mul-button-active': (isActive2 == index) }"
+                         @click="tagSelect2(item,index)"
+                         v-for="item,index in townArray">{{item.areaName}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="screen-line">
+            <div style="display: flex">
+                <el-tag>选择学校</el-tag>
+                <div style="margin-left: 15px">
+                    <div :key="index" class="mul-button"
+                         :class="{'mul-button-active': (isActive3 == index) }"
+                         @click="tagSelect3(item,index)"
+                         v-for="item,index in schoolArray">{{item.schoolName}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="screen-line">
+            <div style="display: flex">
+                <el-tag>选择时间</el-tag>
+                <div style="margin-left: 15px">
+                    <div :key="index" class="mul-button"
+                         :class="{'mul-button-active': (isActive4 == index) }"
+                         @click="tagSelect4(item,index)"
+                         v-for="item,index in timeArray">{{item.time}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <el-row :gutter="50">
+            <el-col :key="index" :span="6" v-for="item,index in lectureArray">
+                <div class="grid-content bg-purple">
+                    <div class="wrap">
+                        <p class="wrap-text">{{item.schoolName}}</p>
+                        <img :src="item.coverImg" width="100%">
+                    </div>
+                    <div class="box-content">
+                        <div class="lecture-name">{{item.lectureName}}</div>
+                        <div class="lecture-time">{{item.lectureTime}}</div>
+                        <div class="speaker-name" style="width:100%">主讲人：{{item.speakerName}}</div>
+                        <el-button @click="enrollDetail(item.lectureId)" class="enroll-button" type="primary">报名
+                        </el-button>
+                    </div>
+                </div>
+            </el-col>
+        </el-row>
+    </div>
+</div>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    .screen, .content {
+        margin: 5% 15% 0;
+    }
+
+    .screen-line {
+        margin-bottom: 3%;
+    }
+
+    .herald {
+        margin-left: 20px;
+    }
+
+    .all {
+        float: right;
+    }
+
+    .headline {
+        float: left;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .el-carousel__item h3 {
+        color: #475669;
+        font-size: 14px;
+        opacity: 0.75;
+        line-height: 150px;
+        margin: 0;
+    }
+
+    .el-carousel__item:nth-child(2n) {
+        background-color: #99a9bf;
+    }
+
+    .el-carousel__item:nth-child(2n+1) {
+        background-color: #d3dce6;
+    }
+
+    .el-row {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .el-col {
+        border-radius: 4px;
+        margin-bottom: 50px;
+    }
+
+    .el-tag {
+        font-size: 20px;
+        width: auto;
+        height: 40px;
+        text-align: center;
+        line-height: 40px;
+    }
+
+    .el-button {
+        margin-left: 2%;
+        font-size: 16px;
+    }
+
+    .bg-purple-dark {
+        background: #99a9bf;
+    }
+
+    .bg-purple {
+        background: #f9fafc;
+    }
+
+    .bg-purple-light {
+        background: #e5e9f2;
+    }
+
+    .grid-content {
+        border-radius: 30px;
+        box-shadow: 7px 6px 20px #cccccc;
+    }
+
+    .wrap {
+        background: #000;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        left: 0;
+        top: 0;
+        border-top-left-radius: 21px;
+        border-top-right-radius: 21px;
+        box-sizing: border-box;
+    }
+
+    .wrap:hover img {
+        opacity: 0.5;
+    }
+
+    .wrap-text {
+        display: none;
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        color: white;
+    }
+
+    .wrap:hover .wrap-text {
+        display: block;
+        z-index: 100;
+    }
+
+    .row-bg {
+        padding: 10px 0;
+        background-color: #f9fafc;
+    }
+
+    .box-content {
+        padding: 5% 5% 5% 7%;
+    }
+
+    .lecture-name, .lecture-time, .speaker-name {
+        margin-bottom: 3%;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .lecture-name {
+        font-size: 1.1vw;
+        font-weight: bold;
+    }
+
+    .lecture-time, .speaker-name {
+        font-size: 0.8vw;
+    }
+
+    .enroll-button {
+        width: 100%;
+        margin: 15px auto 5px auto;
+        display: block;
+    }
+
+    .el-tabs__item {
+        font-size: 20px !important;
+        font-weight: bold;
+    }
+
+    .mul-button,.mul-button-active{
+        display: inline-block;
+        padding: 7px 10px;
+        font-size: 17px;
+        cursor: pointer;
+    }
+    .mul-button{
+        color: #919191;
+    }
+    .mul-button-active{
+        color: #000;
+        background-color: #7ABAFC;
+
+    }
+
+</style>
+<script src="../public/js/common.js"></script>
+<script src="../public/js/lecture.js"></script>
+</body>
+</html>

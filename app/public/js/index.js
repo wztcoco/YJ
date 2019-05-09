@@ -4,16 +4,15 @@ var instance = axios.create({
     headers:{'content-type': 'application/json'}
 });
 
-var getDataFromServer = function(vmObj){
+var getDataFromServer = function(vmObj,dateTime){
     var args = {
         "keyword":"",
-        "pageSize":15,
-        "today":0,
-        "pageIndex":1
+        "pageSize":0,
+        "today":dateTime?dateTime:0,
+        "pageIndex":0
     };
     instance.post('/lecture/getLectureList',{'args':args})
         .then(function(res){
-            console.log(res);
             var res = res.data.obj;
             vmObj.lectureArray = res.searchLectureList;
         })
@@ -38,7 +37,7 @@ var vm = new Vue({
             sels: [],
             total: null,
             tableData: [],
-
+            activeName: 'first',
             // pageIndex: parseInt(page_index),
             // pageSize: parseInt(page_size),
             // pageSizesArr:PAGE_SIZE_ARR,
@@ -48,17 +47,31 @@ var vm = new Vue({
         }
     },
     created:function(){
-      getDataFromServer(this);
+      this.tabClick();
     },
     methods: {
         handleSelect(key, keyPath) {
             console.log(key, keyPath);
         },
         enrollDetail: function (id) {
-            console.log(id);
             localStorage.setItem('lectureId', id);
-            location.replace('http://127.0.0.1:8882/html/chair');
+            loadPartList('/front/chair');
+
+        },
+        handleClick(tab, event) {
+            console.log(tab, event);
+        },
+        tabClick(){
+            if(this.activeName === 'first')
+            {
+                var date = new Date().format("yyyy-MM-dd");
+                getDataFromServer(this,date);
+            }else if(this.activeName === 'second'){
+                getDataFromServer(this,0);
+            }
         }
     }
-
 });
+
+
+

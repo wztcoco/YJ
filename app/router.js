@@ -9,4 +9,5 @@ module.exports = app => {
   require('./router/chair')(app);
   require('./router/build')(app);
   require('./router/index')(app);
+  require('./router/lecture')(app);
 };

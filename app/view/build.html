@@ -24,7 +24,7 @@
         }
 
         #yj-infor-container {
-            margin: 30px 10%;
+            margin: 50px 10%;
             background-color: #fafafa;
             padding-bottom: 15px;
         }
@@ -55,6 +55,63 @@
         .demonstration {
             font-size: 12px;
             color: #aaaaaa;
+        }
+
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 270px;
+            height: 160px;
+            line-height: 160px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 270px;
+            height: 160px;
+            display: block;
+        }
+
+        .avatar-uploader-icon2 {
+            font-size: 28px;
+            color: #8c939d;
+            width: 200px;
+            height: 150px;
+            line-height: 150px;
+            text-align: center;
+        }
+
+        .avatar2 {
+            width: 200px;
+            height: 150px;
+            display: block;
+        }
+
+        .avatar-uploader-icon3 {
+            font-size: 28px;
+            color: #8c939d;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            text-align: center;
+        }
+
+        .avatar3 {
+            width: 80px;
+            height: 80px;
+            display: block;
         }
     </style>
 </head>
@@ -90,13 +147,15 @@
                         <el-input v-model="ruleForm.lectureName" placeholder="例如：考研英语讲解，字数不少于5个字，最多30个字。" clearable>
                     </el-form-item>
                     <el-form-item label="讲座时间：" required class="yj-infor-item">
-                        <el-col :lg="12" >
+                        <el-col :lg="12">
                             <span class="demonstration">开始时间</span>
                             <el-date-picker v-model="ruleForm.startTime" type="datetime" placeholder="选择日期时间"
                                 style="width: 100%">
                             </el-date-picker>
                         </el-col>
-                        <el-col :lg="1" ><div>&nbsp;</div></el-col>
+                        <el-col :lg="1">
+                            <div>&nbsp;</div>
+                        </el-col>
                         <el-col :lg="11">
                             <span class="demonstration">结束时间</span>
                             <el-date-picker v-model="ruleForm.endTime" type="datetime" placeholder="选择日期时间"
@@ -106,16 +165,16 @@
                     </el-form-item>
                     <el-form-item label="讲座地点：" class="yj-infor-item" required>
                         <el-col :lg="6">
-                            <el-select v-model="ruleForm.lectureCity" placeholder="请选择市" @change="selChange">
-                                <el-option v-for="item in cityList" :key="item.value" :label="item.label"
-                                    :value="item.value">
+                            <el-select v-model="lectureCity" placeholder="请选择市" @change="selCity">
+                                <el-option v-for="item in cityList" :key="item.cityCode" :label="item.cityName"
+                                    :value="item.cityCode">
                                 </el-option>
                             </el-select>
                         </el-col>
                         <el-col :lg="6">
-                            <el-select v-model="ruleForm.lectureTown" placeholder="请选择区" @change="selChange">
-                                <el-option v-for="item in townList" :key="item.value" :label="item.label"
-                                    :value="item.value">
+                            <el-select v-model="lectureTown" placeholder="请选择区" @change="selTown">
+                                <el-option v-for="item in townList" :key="item.townCode" :label="item.areaName"
+                                    :value="item.townCode">
                                 </el-option>
                             </el-select>
                         </el-col>
@@ -129,23 +188,173 @@
                     </el-form-item>
                     <el-form-item label="讲座类型：" class="yj-infor-item" required>
                         <el-col :lg="24">
-                            <el-select v-model="ruleForm.lectureType" placeholder="请选择类型" @change="selChange"  width=100%>
-                                <el-option v-for="item in typeList" :key="item.value" :label="item.label"
-                                    :value="item.value">
+                            <el-select v-model="ruleForm.lectureType" placeholder="请选择讲座类型">
+                                <el-option v-for="item in typeList" :key="item.lectureTypeId" :label="item.lectureTypeName"
+                                    :value="item.lectureTypeId">
                                 </el-option>
                             </el-select>
                         </el-col>
                     </el-form-item>
-                    <el-form-item label="讲座类型：" class="yj-infor-item" required>
+                    <el-form-item label="讲座海报：" class="yj-infor-item" required>
+                        <el-col :span="12">
+                            <el-upload class="avatar-uploader" action="http://127.0.0.1:7777/front/api/lecture/uploadCommonImg" enctype="multipart/form-data"
+                                :data="posterArgs"
+                                :show-file-list="false" :on-success="handleAvatarSuccess1"
+                                :before-upload="beforeAvatarUpload">
+                                <img v-if="posterImg" :src="posterImg" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>
+                        </el-col>
+                        <el-col :span="12">
+                            <div class="demonstration">
+                                温馨提示：
+                            </div>
+                            <div class="demonstration">
+                                此图片将作为此讲座的海报封面一张漂亮的封面图片可以提高浏览者视觉体验。 </div>
+                            <div class="demonstration">
+                                如果您并没有合适的图片，可以在系统图库中选择一张图片。</div>
+                            <div class="demonstration">
+                                建议上传尺寸 1080px*640px 的.png、.jpg、.gif图片。</div>
+                        </el-col>
+
+                    </el-form-item>
+                    <el-form-item label="讲座海报：" class="yj-infor-item" required>
+                        <el-col :span="12">
+                            <el-upload class="avatar-uploader" action="http://127.0.0.1:7777/front/api/lecture/uploadCommonImg" enctype="multipart/form-data"
+                            :data="coverArgs"
+                                :show-file-list="false" :on-success="handleAvatarSuccess2"
+                                :before-upload="beforeAvatarUpload">
+                                <img v-if="coverImg" :src="coverImg" class="avatar2">
+                                <i v-else class="el-icon-plus avatar-uploader-icon2"></i>
+                            </el-upload>
+                        </el-col>
+                        <el-col :span="12">
+                            <div class="demonstration">
+                                建议上传尺寸 200px*150px 的.png、.jpg、.gif图片。
+                            </div>
+                            <el-button size="medium" type="primary" style="margin:30px 0" @click="changeImg()">
+                                使用系统图库</el-button>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="讲座详情：" class="yj-infor-item" required>
+                        <el-col :span="24">
+                            <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="lectureDetail">
+                            </el-input>
+
+                        </el-col>
+                    </el-form-item>
+
+
+                    <el-form-item label="主讲人：" class="yj-infor-item" required>
+                        <el-col :lg="20">
+                            <el-input placeholder="请输入主讲人" v-model="speakerInfo" style="width:10em;margin-bottom:15px;">
+                            </el-input>
+                            <el-input type="textarea" :rows="2" placeholder="请输入主讲人简介" v-model="lectureSpeaker">
+                            </el-input>
+
+                        </el-col>
+                        <el-col :lg="4">
+                                <el-upload class="avatar-uploader" action="http://127.0.0.1:7777/front/api/lecture/uploadCommonImg" enctype="multipart/form-data"
+                                :data="speakerArgs"
+                                :show-file-list="false" :on-success="handleAvatarSuccess3"
+                                :before-upload="beforeAvatarUpload" style="float:right;margin-top:10px;">
+                                <img v-if="speakerImg" :src="speakerImg" class="avatar3">
+                                <i v-else class="el-icon-plus avatar-uploader-icon3"></i>
+                        </el-col>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="活动流程：" class="yj-infor-item" required>
+                        <el-col :lg="24" v-for="item in processArr">
                             <el-col :lg="12">
-                                    <
-                                </el-col>
-                        </el-form-item>
+                                <el-time-select placeholder="起始时间" v-model="item.startTime" :picker-options="{
+                                  start: '00:00',
+                                  step: '00:15',
+                                  end: '23:45'
+                                }">
+                                </el-time-select>
+
+                            </el-col>
+                            <el-col :lg="12">
+                                <el-time-select placeholder="结束时间" v-model="item.endTime" :picker-options="{
+                                      start: '00:00',
+                                      step: '00:15',
+                                      end: '23:45',
+                                      minTime: item.startTime
+                                    }">
+                                </el-time-select>
+
+                            </el-col>
+                            <el-col :lg="24">
+                                <el-input placeholder="内容描述" v-model="item.content" style="margin:15px 0;">
+                                </el-input>
+                            </el-col>
+                        </el-col>
+                        <el-button type="primary" @click="addProcess()" icon="el-icon-circle-plus-outline" plain>添加流程
+                        </el-button>
+                    </el-form-item>
+                    <el-form-item label="活动标签：" class="yj-infor-item" required>
+                        <div v-for="(item,index) in tagArr" style="float:left;margin:0 15px 15px 0">
+                            <el-button type="info" @click="deleteTag(index)" style="margin-top:15px 0;">{{item.tagName}}
+                            </el-button>
+
+                        </div>
+                        <el-col :lg="24">
+                            <el-input placeholder="输入标签：" v-model="tagName">
+                            </el-input>
+                            <el-button type="primary" @click="addTag()" style="margin-top:15px;"
+                                icon="el-icon-circle-plus-outline" plain>添加标签</el-button>
+                            <span class="demonstration">最多添加6个</span>
+                        </el-col>
+
+                        </el-button>
+                    </el-form-item>
                 </el-form>
             </div>
         </div>
+        <div id="yj-infor-container">
+            <div class="yj-chair-title">
+                信息活动
+            </div>
+            <div class="yj-infor-content">
+                <el-form>
+                    <template>
+                        <el-table :data="ticketArr" style="width: 100%">
+                            <el-table-column prop="ticketId" label="ID" type="index" width="100">
+                            </el-table-column>
+                            <el-table-column prop="ticketName" label="门票名称">
+
+                            </el-table-column>
+                            <el-table-column label="单价(¥)">
+                                <template slot-scope="scope">
+                                    <el-input type="number" v-show="true" v-model="scope.row.ticketPrice" size="mini" />
+                                </template>
+                            </el-table-column>
+                            </el-table-column>
+                            <el-table-column label="票数">
+                                <template slot-scope="scope">
+                                    <el-input type="number" v-show="true" v-model="scope.row.ticketNum" size="mini" />
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="amount" width="100px" label="清空">
+                                <template slot-scope="scope">
+                                    <el-button type="danger" icon="el-icon-delete" circle
+                                        @click="deleteTicket(scope.row)">
+                                    </el-button>
+                                </template>
+                        </el-table>
+                    </template>
+                </el-form>
+            </div>
+        </div>
+        <el-row style="text-align:center;">
+            <el-button type="primary" icon="el-icon-plus" @click="saveLecture()" style="margin:30px 50px;">发布
+            </el-button>
+            <!-- <el-button type="warning" icon="el-icon-check" @click="pushLecture()" style="margin:30px 50px;">发布
+            </el-button> -->
+        </el-row>
     </div>
     <script src="../public/js/build.js"></script>
+    <script src="../public/js/common.js"></script>
 </body>
 
 
