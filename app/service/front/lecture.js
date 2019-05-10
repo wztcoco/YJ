@@ -357,7 +357,6 @@ class LectureService extends Service {
 
         const ctx=this.ctx;
         const file = ctx.request.files[0];
-        console.log('file=========='+file);
         const dirName=ctx.request.body.dirName;
         const userId=ctx.request.body.userId;
         const extName=path.extname(file.filename);
@@ -366,12 +365,11 @@ class LectureService extends Service {
 
         let finalPath =__dirname+ `/../../public/images/${dirName}/${targetPath}`;
         try{
-            console.log(filePath);
-            console.log(finalPath);
+
             fs.rename(filePath, finalPath,function (error) {
                 if(error){
-                    console.log(error);
-                    return ctx.helper.getApiResult(constant.apiCode.serviceError, '内部错误', error);
+                    // console.log('error  '+error);
+                    // throw error;
                 }
                 else{
                     console.log("well done")
@@ -379,8 +377,8 @@ class LectureService extends Service {
             });
             return ctx.helper.getApiResult(constant.apiCode.normal, '上传成功', {imgUrl: `http://www.mastercoco.com:7777/public/images/${dirName}/${targetPath}`});
 
-        }catch(err){
-            console.log(err);
+        }catch(error){
+            console.log('error:'+error);
             return ctx.helper.getApiResult(constant.apiCode.serviceError, '内部错误', error);
         }
     }
