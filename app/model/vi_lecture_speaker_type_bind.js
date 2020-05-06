@@ -97,6 +97,14 @@ module.exports = app => {
     schoolName: {
       type: DataTypes.STRING(255),
       allowNull: true
+    },
+    clickTimes: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false
+    },
+    buyTimes: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false
     }
   }, {
     tableName: 'vi_lecture_speaker_type_bind',

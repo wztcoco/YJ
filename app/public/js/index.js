@@ -25,10 +25,10 @@ var vm = new Vue({
         return {
             activeIndex2:"1",
             backgroundArray:[
-                {url:"../images/rotationChart.png"},
-                {url:"../images/rotationChart.png"},
-                {url:"../images/rotationChart.png"},
-                {url:"../images/rotationChart.png"}
+                {url:"../public/images/rotationChart.png"},
+                {url:"../public/images/rotationChart.png"},
+                {url:"../public/images/rotationChart.png"},
+                {url:"../public/images/rotationChart.png"}
                 ],
             lectureArray:[],
             rules: {
@@ -50,12 +50,15 @@ var vm = new Vue({
       this.tabClick();
     },
     methods: {
+        backToIndex(){
+            location.replace('/front/index');
+        },
         handleSelect(key, keyPath) {
             console.log(key, keyPath);
         },
         enrollDetail: function (id) {
             localStorage.setItem('lectureId', id);
-            loadPartList('/front/chair');
+            location.replace('http://www.mastercoco.com:7777/front/chair');
 
         },
         handleClick(tab, event) {

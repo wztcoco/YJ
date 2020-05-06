@@ -10,4 +10,7 @@ module.exports = app => {
   require('./router/build')(app);
   require('./router/index')(app);
   require('./router/lecture')(app);
+  require('./router/user')(app);
+  require('./router/login')(app);
+  require('./router/data')(app);
 };

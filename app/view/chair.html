@@ -10,6 +10,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>研讲</title>
   <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <link rel="stylesheet" href="../public/css/common.css">
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/element-ui/lib/index.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
@@ -158,24 +159,63 @@
 
 <body>
   <div id="container">
-    <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" @select="handleSelect"
-      background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-      <el-menu-item index="1">主页</el-menu-item>
-      <el-submenu index="2">
-        <template slot="title">不想被针队</template>
-        <el-menu-item index="2-1">选项1</el-menu-item>
-        <el-menu-item index="2-2">选项2</el-menu-item>
-        <el-menu-item index="2-3">选项3</el-menu-item>
-        <el-submenu index="2-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="2-4-1">选项1</el-menu-item>
-          <el-menu-item index="2-4-2">选项2</el-menu-item>
-          <el-menu-item index="2-4-3">选项3</el-menu-item>
+    <div class="yj-head-container">
+      <el-menu class="el-menu-demo" mode="horizontal">
+          <el-menu-item index="1"  @click="backToIndex()">
+              <img  src="../public/images/others/yj_logo.png" style="width: 80px;margin-right: 15px"></el-menu-item>
+        <el-submenu index="2">
+          <template slot="title">发现活动</template>
+          <div class="yj-find-type">
+            <div class="yj-find-time">
+              <div class="yj-head-submenu"><img class="yj-head-icon" src="../public/images/icons/icon_calendar.svg">
+                <div class="yj-head-icon-text">时间</div>
+              </div>
+              <div class="yj-head-sub-con">
+                <div v-for="(item,index) in searchTArr" style="float:left;margin:0 15px 15px 0">
+                  <el-button type="primary" size="mini" @click="selectTime(index)">{{item.timeName}}
+                  </el-button>
+                </div>
+              </div>
+            </div>
+            <div class="yj-find-time">
+              <div class="yj-head-submenu"><img class="yj-head-icon" src="../public/images/icons/icon_collection.svg">
+                <div class="yj-head-icon-text">类别</div>
+              </div>
+              <div class="yj-head-sub-con">
+                <div v-for="(item,index) in typeArr" style="float:left;margin:0 15px 15px 0">
+                  <el-button type="primary" size="mini" @click="selectType(index)">
+                    {{item.lectureTypeName}}
+                  </el-button>
+                </div>
+              </div>
+            </div>
+            <div class="yj-find-time">
+              <div class="yj-head-submenu"><img class="yj-head-icon" src="../public/images/icons/icon_GPS.svg">
+                <div class="yj-head-icon-text">城市</div>
+              </div>
+              <div class="yj-head-sub-con">
+                <div v-for="(item,index) in cityArr" style="float:left;margin:0 15px 15px 0">
+                  <el-button type="primary" size="mini" @click="selectType(index)">{{item.cityName}}
+                  </el-button>
+                </div>
+              </div>
+            </div>
+          </div>
         </el-submenu>
-      </el-submenu>
-
-      <el-menu-item index="3"><i class="el-icon-message"></i>消息中心</el-menu-item>
-    </el-menu>
+        <el-menu-item index="3">
+          <el-input placeholder="请输入关键字" v-model="actInput"><i slot="suffix" class="el-input__icon el-icon-search"
+              @click="searchKey()"></i>
+          </el-input>
+        </el-menu-item>
+        <el-menu-item index="4" style="float: right;display: flex;align-items: center" @click="userCenter()">
+          <img style="width: 48px;" src="../public/images/others/avatar.png">
+        </el-menu-item>
+        <el-menu-item index="5" style="float: right;">
+          <el-button type="primary" size="medium" @click="buildAct()">创建活动
+          </el-button>
+        </el-menu-item>
+      </el-menu>
+    </div>
     <img class="yj-chair-poster" :src="lectureData.posterImg">
     <div class="yj-chair-detail-title">
       <i class="el-icon-date"> 讲座详情</i>
@@ -185,7 +225,7 @@
         <el-row>
           <el-col :span="10">
             <div class="grid-content bg-purple">
-              <img class="yj-chair-ibar-left" src="../public/images/lineLeft.png">
+              <img class="yj-chair-ibar-left" src="../public/images/others/lineLeft.png">
             </div>
           </el-col>
           <el-col :span="4">
@@ -193,7 +233,7 @@
           </el-col>
           <el-col :span="10">
             <div class="grid-content bg-purple">
-              <img class="yj-chair-ibar-right" src="../public/images/lineRight.png">
+              <img class="yj-chair-ibar-right" src="../public/images/others/lineRight.png">
             </div>
           </el-col>
         </el-row>
@@ -205,7 +245,7 @@
         <el-row>
           <el-col :span="10">
             <div class="grid-content bg-purple">
-              <img class="yj-chair-ibar-left" src="../public/images/lineLeft.png">
+              <img class="yj-chair-ibar-left" src="../public/images/others/lineLeft.png">
             </div>
           </el-col>
           <el-col :span="4">
@@ -213,7 +253,7 @@
           </el-col>
           <el-col :span="10">
             <div class="grid-content bg-purple">
-              <img class="yj-chair-ibar-right" src="../public/images/lineRight.png">
+              <img class="yj-chair-ibar-right" src="../public/images/others/lineRight.png">
             </div>
           </el-col>
         </el-row>
@@ -233,7 +273,7 @@
                     {{lectureData.speakerName}}
                   </div>
                   <div class="yj-chair-guest-institute">
-                    
+
                   </div>
                   <div class="yj-chair-guest-intro">
                     {{lectureData.speakerIntroduction}}
@@ -248,7 +288,7 @@
         <el-row>
           <el-col :span="10">
             <div class="grid-content bg-purple">
-              <img class="yj-chair-ibar-left" src="../public/images/lineLeft.png">
+              <img class="yj-chair-ibar-left" src="../public/images/others/lineLeft.png">
             </div>
           </el-col>
           <el-col :span="4">
@@ -256,7 +296,7 @@
           </el-col>
           <el-col :span="10">
             <div class="grid-content bg-purple">
-              <img class="yj-chair-ibar-right" src="../public/images/lineRight.png">
+              <img class="yj-chair-ibar-right" src="../public/images/others/lineRight.png">
             </div>
           </el-col>
         </el-row>
@@ -282,7 +322,7 @@
       </div>
     </div>
     <div class="yj-chair-ticket">
-      <img class="yj-chair-ticket-img" src="../public/images/ticket.png">
+      <img class="yj-chair-ticket-img" src="../public/images/others/ticket.png">
       <div class="yj-chair-ticket-title">讲座门票</div>
     </div>
     <div class="yj-chair-ticket-container">
@@ -323,9 +363,10 @@
     </div>
     <div style="background-color: #545c64">
       <div class="yj-chair-sponser">活动主办方</div>
-      <img class="yj-chair-sponser-img" src="../public/images/zust.png">
+      <img class="yj-chair-sponser-img" src="../public/images/others/zust.png">
     </div>
   </div>
+  <script src="../public/js/common.js"></script>
   <script src="../public/js/chair.js"></script>
 </body>
 

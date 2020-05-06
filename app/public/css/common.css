@@ -1,0 +1,43 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+.yj-head-container {
+    max-width: 1248px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.yj-find-type{
+    padding: 16px;
+    width:474px;
+    height:290px;
+}
+.yj-head-icon{
+    float: left;
+    width: 16px;
+    padding: 4px;
+    color:#409EFF;
+}
+.yj-find-time{
+    float: left;
+    width: 100%;
+}
+.yj-head-submenu{
+    float: left;
+    font-size:13px;
+    width:80px;
+    height: 100%;
+}
+.yj-head-icon-text{
+    float: left;    
+    color:#409EFF;
+    height: 25px;
+    line-height: 25px
+}
+.yj-head-sub-con{
+    float: left;
+    width: 394px;
+}
+.el-icon-plus{
+    color: #ffffff
+}

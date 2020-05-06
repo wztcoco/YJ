@@ -79,7 +79,7 @@ class LectureService extends Service {
     //获取讲座列表
     async getLectureList(params) {
         const ctx = this.ctx;
-        const {keyword = "", pageIndex = 1, pageSize = 30, today = 0} = params;
+        const {keyword = "", pageIndex = 1, pageSize = 8, today = 0} = params;
         const searchObj = {
             where: {
                 lectureName: {$like: '%' + keyword + '%'},
@@ -87,7 +87,44 @@ class LectureService extends Service {
                 participateTime: {$between: [today + " 00:00:00", today + " 23:59:59"]},
             },
             attributes: ['lectureId', 'lectureName', ctx.helper.formatDatabaseTime('participateTime', '%Y-%m-%d %H:%i'),
-                ctx.helper.formatDatabaseTime('endTime', '%Y-%m-%d %H:%i'), 'coverImg', 'speakerName', 'schoolName'],
+                ctx.helper.formatDatabaseTime('endTime', '%Y-%m-%d %H:%i'), 'coverImg', 'speakerName', 'schoolName', 'clickTimes', 'buyTimes'],
+            limit: pageSize,
+            offset: pageSize * (pageIndex - 1),
+            raw: true,
+            order: [['clickTimes', 'DESC']]
+        };
+        if (pageIndex === 0 && pageSize === 0) {
+            delete searchObj.limit;
+            delete searchObj.offset;
+        }
+        if (today == 0) {
+            delete searchObj.where.participateTime;
+        }
+        const searchLectureList = await ctx.model.ViLectureSpeakerTypeBind.findAndCountAll(searchObj);
+        //处理讲座时间
+        underscore.map(searchLectureList.rows, function (item) {
+
+            item.lectureTime = item.participateTime + '-' + moment(item.endTime).toString().substring(16, 21)
+        });
+        let responseObj = {};
+        responseObj.searchLectureList = searchLectureList.rows;
+        responseObj.total = searchLectureList.count;
+        return ctx.helper.getApiResult(constant.apiCode.normal, '查询列表成功', responseObj);
+
+    }
+    //获取用户创建的讲座列表
+    async getUserLectureList(params) {
+        const ctx = this.ctx;
+        const {createId ,keyword = "", pageIndex = 1, pageSize = 8, today = 0} = params;
+        const searchObj = {
+            where: {
+                creatorId:createId,
+                lectureName: {$like: '%' + keyword + '%'},
+                lectureStatus: 1,
+                participateTime: {$between: [today + " 00:00:00", today + " 23:59:59"]},
+            },
+            attributes: ['lectureId', 'lectureName', ctx.helper.formatDatabaseTime('participateTime', '%Y-%m-%d %H:%i'),
+                ctx.helper.formatDatabaseTime('endTime', '%Y-%m-%d %H:%i'), 'coverImg', 'speakerName', 'schoolName', 'clickTimes', 'buyTimes'],
             limit: pageSize,
             offset: pageSize * (pageIndex - 1),
             raw: true,
@@ -112,7 +149,43 @@ class LectureService extends Service {
         return ctx.helper.getApiResult(constant.apiCode.normal, '查询列表成功', responseObj);
 
     }
+    //获取用户参与的讲座列表
+    async getJoinedLectureList(params) {
+        const ctx = this.ctx;
+        const {userId} = params;
+        const searchObj = {
+            where: {
+                userId: userId
+            },
+            attributes: ['lectureId']
+        };
+        const searchLectureList = await ctx.model.GsUserTicketBind.findAll(searchObj);
+        //处理讲座时间
+        const LectureIdData = underscore.pluck(searchLectureList,"dataValues");
+        const LectureIdList = underscore.pluck(LectureIdData,"lectureId");
+        const idList = underscore.uniq(LectureIdList);
+        const searchObj2 = {
+            where: {
+                lectureId:idList,
+                lectureStatus: 1,
+            },
+            attributes: ['lectureId', 'lectureName', ctx.helper.formatDatabaseTime('participateTime', '%Y-%m-%d %H:%i'),
+                ctx.helper.formatDatabaseTime('endTime', '%Y-%m-%d %H:%i'), 'coverImg', 'speakerName', 'schoolName', 'clickTimes', 'buyTimes'],
+            
+            order: [['participateTime', 'DESC']]
+        };
+        const LectureList = await ctx.model.ViLectureSpeakerTypeBind.findAndCountAll(searchObj2);
+        //处理讲座时间
+        underscore.map(LectureList.rows, function (item) {
 
+            item.lectureTime = item.participateTime + '-' + moment(item.endTime).toString().substring(16, 21)
+        });
+        let responseObj = {};
+        responseObj.searchLectureList = LectureList.rows;
+        responseObj.total = LectureList.count;
+        return ctx.helper.getApiResult(constant.apiCode.normal, '查询列表成功', responseObj);
+
+    }
     //购买门票
     async purchaseTicket(params) {
         const ctx = this.ctx;
@@ -306,7 +379,7 @@ class LectureService extends Service {
     //获取讲座列表(高级筛选)
     async getLectureListAdvanced(params) {
         const ctx = this.ctx;
-        const {keyword = "", pageIndex = 1, pageSize = 30, startTime = "0", endTime = "0", lectureTypeId = 0, townCode = "0", schoolName = ""} = params;
+        const {keyword = "", pageIndex = 1, pageSize = 0, startTime = "0", endTime = "0", lectureTypeId = 0, townCode = "0", schoolName = ""} = params;
         const searchObj = {
             where: {
                 lectureName: {$like: '%' + keyword + '%'},
@@ -314,15 +387,18 @@ class LectureService extends Service {
                 participateTime: {$between: [startTime + " 00:00:00", endTime + " 23:59:59"]},
             },
             attributes: ['lectureId', 'lectureName', ctx.helper.formatDatabaseTime('participateTime', '%Y-%m-%d %H:%i'),
-                ctx.helper.formatDatabaseTime('endTime', '%Y-%m-%d %H:%i'), 'coverImg', 'speakerName', 'schoolName'],
+                ctx.helper.formatDatabaseTime('endTime', '%Y-%m-%d %H:%i'), 'coverImg', 'speakerName', 'schoolName', 'clickTimes', 'buyTimes'],
             limit: pageSize,
             offset: pageSize * (pageIndex - 1),
             raw: true,
-            order: [['participateTime', 'DESC']]
+            order: [['clickTimes', 'DESC']]
         };
         if (pageIndex === 0 && pageSize === 0) {
             delete searchObj.limit;
             delete searchObj.offset;
+        }
+        if (startTime === 0 && endTime === 0) {
+            delete searchObj.where.participateTime;
         }
         //讲座类型筛选
         if (lectureTypeId !== 0) {
@@ -381,6 +457,80 @@ class LectureService extends Service {
             console.log('error:'+error);
             return ctx.helper.getApiResult(constant.apiCode.serviceError, '内部错误', error);
         }
+    }
+    async getUserLogin(params) {
+        console.log(params);
+        const ctx = this.ctx;
+        const {account,password} = params;
+        const searchUser = await ctx.model.GsUser.findOne({
+            attributes: ['userId'],
+            where: {
+                phoneNumber: account,
+                password:password
+            }
+        });
+        console.log(searchUser);
+        if(searchUser){
+            return ctx.helper.getApiResult(constant.apiCode.normal, '登录成功', searchUser);
+        }
+            return ctx.helper.getApiResult(constant.apiCode.serviceError, '账号密码错误', searchUser);
+        
+    }
+    async getUserClickData(params) {
+        const ctx = this.ctx;
+        const {userId} = params;
+        const searchObj = {
+            where: {
+                userId:userId
+            },
+            attributes: ['clickTimes', 'lectureName'],
+        };
+        const searchLectureList = await ctx.model.ViClickLecture.findAll(searchObj);
+        let data = [];
+        underscore.map(searchLectureList, function (item) {
+            let datas={};
+            datas.value = item.clickTimes;
+            datas.name = item.lectureName;
+            data.push(datas);
+        });
+        let responseObj = {};
+        responseObj.searchLectureList =data;
+        return ctx.helper.getApiResult(constant.apiCode.normal, '查询列表成功', responseObj);
+
+    }
+    async getUserBuyData(params) {
+        const ctx = this.ctx;
+        const {userId} = params;
+        const searchObj = {
+            where: {
+                userId:userId
+            },
+            attributes: ['buyTimes', 'lectureName'],
+        };
+        const searchLectureList = await ctx.model.ViBuyLecture.findAll(searchObj);
+        let data = [];
+        console.log(searchLectureList);
+        underscore.map(searchLectureList, function (item) {
+            let datas={};
+            datas.value = item.buyTimes;
+            datas.name = item.lectureName;
+            data.push(datas);
+        });
+        let responseObj = {};
+        responseObj.searchLectureList =data;
+        return ctx.helper.getApiResult(constant.apiCode.normal, '查询列表成功', responseObj);
+
+    }
+    async getClick(params) {
+        const ctx = this.ctx;
+        const {userId,lectureId} = params;
+        const createClick = await ctx.model.UserClick.create({
+            userId: userId,
+            lectureId: lectureId,
+            clickTime:moment().format()
+        });
+        return ctx.helper.getApiResult(constant.apiCode.normal, '插入成功', {});
+
     }
 }
 

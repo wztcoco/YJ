@@ -1,28 +1,28 @@
+var userId = localStorage.getItem('userId') || '1';
 var lectureId = localStorage.getItem('lectureId') || '1';
 var creatorId = '1';
-var keyword= localStorage.getItem('keyword') || "";
-var userId = localStorage.getItem('userId') || '1';
-var lectureTypeId= localStorage.getItem('lectureTypeId')-'0' || 0;
-var startTime= localStorage.getItem('startTime') || "0";
-var endTime= localStorage.getItem('endTime') || "0";
-var townCode= localStorage.getItem('townCode') || "0";
+
 var instance = axios.create({
     baseURL: '/front/api/',
     timeout: 2000,
     headers: { 'content-type': 'application/json' }
 });
-var getDataFromServer = function(vmObj){
+var getUTakeFromServer = function(vmObj){
     var args = {
-        "keyword":vmObj.actInput,
-		"pageSize":vmObj.pageSize,
-		"pageIndex":vmObj.pageIndex,
-		"startTime":vmObj.startTime,
-		"endTime":vmObj.endTime,
-		"lectureTypeId":vmObj.lectureTypeId,
-		"townCode":vmObj.townCode,
-		"schoolName":vmObj.schoolName
+            "userId":userId
     };
-    instance.post('/lecture/getLectureListAdvanced',{'args':args})
+    instance.post('/lecture/getJoinedLectureList',{'args':args})
+    .then(function(res){
+        console.log(res);
+        var res = res.data.obj;
+        vmObj.lectureArray=res.searchLectureList;
+    })
+};
+var getUBuildFromServer= function(vmObj){
+    var args = {
+            "createId":userId
+    };
+    instance.post('/lecture/getUserLectureList',{'args':args})
     .then(function(res){
         console.log(res);
         var res = res.data.obj;
@@ -38,7 +38,6 @@ var getTypeFromServer = function(vmObj){
         vmObj.typeArr=res;
     })
 };
-
 var vm = new Vue({
     el: "#container",
     data: {
@@ -114,7 +113,7 @@ var vm = new Vue({
             "cityName": "重庆"
         }],
         typeArr:[],
-        actInput:keyword,
+        actInput:"",
         tagArr: [],
         processArr: [{
             sort: 1,
@@ -152,17 +151,15 @@ var vm = new Vue({
             "userId": creatorId
         },
         lectureArray:[],
-        pageIndex:0,
-        pageSize:0,
-        lectureTypeId:lectureTypeId,
-        startTime:startTime,
-        endTime:endTime,
-        townCode:townCode,
-        schoolName:""
     },
     created: function () {
-        getDataFromServer(this);
+        getUTakeFromServer(this);
         getTypeFromServer(this);
+        if (this.selectLectureId != "") {
+
+        } else {
+
+        }
     },
     
     methods: {
@@ -170,36 +167,59 @@ var vm = new Vue({
             location.replace('/front/index');
         },
         selectTime(index) {
-            this.startTime=this.searchTArr[index].startTime,
-            this.endTime=this.searchTArr[index].endTime
-            console.log(index);
-            getDataFromServer(this);
+            localStorage.setItem('startTime', this.searchTArr[index].startTime);
+            localStorage.setItem('endTime', this.searchTArr[index].endTime);
+            location.replace('/front/lecture');
         },
         selectType(index) {
-            this.lectureTypeId=this.typeArr[index].lectureTypeId,
-            getDataFromServer(this);
-            console.log(this.searchTArr);
-            console.log(index);
+            localStorage.setItem('lectureTypeId', this.typeArr[index].lectureTypeId);
+            location.replace('/front/lecture');
         },
         selectCity(index) {
-            this.townCode=this.cityArr[index].areaCode,
-            getDataFromServer(this);
-            console.log(index);
+            localStorage.setItem('townCode', this.cityArr[index].areaCode);
+            location.replace('/front/lecture');
         },
         searchKey(){
-            this.keyword=this.actInput,
-            getDataFromServer(this);
+            localStorage.setItem('keyword', this.actInput);
+            location.replace('/front/lecture');
+        },
+        imgLoad(){
+            this.$nextTick(()=>{
+                this.bannerHeight=this.$refs.bannerHeight[0].height;
+            })
         },
         enrollDetail: function (id) {
             localStorage.setItem('lectureId', id);
             location.replace('/front/chair');
 
         },
+        userData:function(){
+            location.replace('/front/data');
+        },
         buildAct: function () {
             location.replace('/front/build');
+        },
+        handleOpen(key, keyPath) {
+            console.log(key, keyPath);
+          },
+          handleClose(key, keyPath) {
+            console.log(key, keyPath);
+          },
+          userTake(){
+            getUTakeFromServer(this);
+          },
+          userBuild(){
+            getUBuildFromServer(this);
         },
         userCenter(){
             location.replace('/front/user');
         }
-    }
-}); 
+    },
+    mounted(){
+        this.imgLoad();
+        window.addEventListener('resize',()=>{
+            this.bannerHeight=this.$refs.bannerHeight[0].height;
+            this.imgLoad();
+        },false)
+    },
+});

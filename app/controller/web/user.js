@@ -2,9 +2,9 @@ const Controller = require('egg').Controller;
 class HomeController extends Controller {
 
 
-    async indexPage() {
+    async userPage() {
         const { ctx } = this;
-        await ctx.render('home',{
+        await ctx.render('user',{
         });
     }
 

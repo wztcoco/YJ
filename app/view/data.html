@@ -15,6 +15,7 @@
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="../public/js/echarts.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -87,12 +88,6 @@
             margin: 50px 0 10px 25px;
         }
 
-        .yj-search-box-type {
-            color: #409EFF;
-            font-size: 20px;
-            margin: 30px 0 30px 25px;
-        }
-
         .yj-act-title {
             padding: 5px 10px;
             color: #202020;
@@ -135,8 +130,7 @@
                             </div>
                             <div class="yj-head-sub-con">
                                 <div v-for="(item,index) in searchTArr" style="float:left;margin:0 15px 15px 0">
-                                    <el-button type="primary" size="mini" v-on:click="selectTime(index)">
-                                        {{item.timeName}}
+                                    <el-button type="primary" size="mini" @click="selectTime(index)">{{item.timeName}}
                                     </el-button>
                                 </div>
                             </div>
@@ -148,7 +142,7 @@
                             </div>
                             <div class="yj-head-sub-con">
                                 <div v-for="(item,index) in typeArr" style="float:left;margin:0 15px 15px 0">
-                                    <el-button type="primary" size="mini" v-on:click="selectType(index)">
+                                    <el-button type="primary" size="mini" @click="selectType(index)">
                                         {{item.lectureTypeName}}
                                     </el-button>
                                 </div>
@@ -161,8 +155,7 @@
                             </div>
                             <div class="yj-head-sub-con">
                                 <div v-for="(item,index) in cityArr" style="float:left;margin:0 15px 15px 0">
-                                    <el-button type="primary" size="mini" v-on:click="selectCity(index)">
-                                        {{item.cityName}}
+                                    <el-button type="primary" size="mini" @click="selectType(index)">{{item.cityName}}
                                     </el-button>
                                 </div>
                             </div>
@@ -183,72 +176,11 @@
                 </el-menu-item>
             </el-menu>
         </div>
-        <div class="container">
-            <div class="yj-search-box-type">
-                <div class="yj-find-time">
-                    <div class="yj-head-submenu"><img class="yj-head-icon"
-                            src="../public/images/icons/icon_calendar.svg">
-                        <div class="yj-head-icon-text">时间</div>
-                    </div>
-                    <div>
-                        <div v-for="(item,index) in searchTArr" style="float:left;margin:0 15px 15px 0">
-                            <el-button type="primary" size="mini" v-on:click="selectTime(index)">{{item.timeName}}
-                            </el-button>
-                        </div>
-                    </div>
-                </div>
-                <div class="yj-find-time">
-                    <div class="yj-head-submenu"><img class="yj-head-icon"
-                            src="../public/images/icons/icon_collection.svg">
-                        <div class="yj-head-icon-text">类别</div>
-                    </div>
-                    <div>
-                        <div v-for="(item,index) in typeArr" style="float:left;margin:0 15px 15px 0">
-                            <el-button type="primary" size="mini" v-on:click="selectType(index)">
-                                {{item.lectureTypeName}}
-                            </el-button>
-                        </div>
-                    </div>
-                </div>
-                <div class="yj-find-time">
-                    <div class="yj-head-submenu"><img class="yj-head-icon" src="../public/images/icons/icon_GPS.svg">
-                        <div class="yj-head-icon-text">城市</div>
-                    </div>
-                    <div>
-                        <div v-for="(item,index) in cityArr" style="float:left;margin:0 15px 15px 0">
-                            <el-button type="primary" size="mini" v-on:click="selectCity(index)">{{item.cityName}}
-                            </el-button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="yj-act-con-title"><i class="el-icon-search
-                "></i> 搜索结果</div>
-            <el-row :gutter="20" style="margin:0 15px 0 15px">
-                <el-col :xs="12" :sm="6" v-for="item,index in lectureArray" :key="index">
-                    <div class="grid-content bg-purple" v-on:click="enrollDetail(item.lectureId)">
-                        <el-image style="width:100%" :src="item.coverImg"></el-image>
-
-                        <div class="yj-act-title">{{item.lectureName}}</div>
-                        <div class="yj-act-text-box">
-                            <i class="el-icon-date"></i>
-                            <div class="yj-act-time">{{item.participateTime}}</div>
-                        </div>
-                        <div class="yj-act-text-box">
-                            <i class="el-icon-location-outline"></i>
-                            <div class="yj-act-area">{{item.schoolName}}</div>
-                        </div>
-                        <div class="yj-act-text-box" style="padding-bottom:5px">
-                            <div class="yj-act-area">点击量： {{item.clickTimes}}</div>
-                            <div class="yj-act-area" style="padding-left:15px">参与量： {{item.buyTimes}}</div>
-                        </div>
-                    </div>
-                </el-col>
-            </el-row>
-        </div>
+            <div id="main" style="width: 50% ;height:1000px;float: left;"></div>
+            <div id="main2" style="width: 50% ;height:1000px;float: left;"></div>
     </div>
     <script src="../public/js/common.js"></script>
-    <script src="../public/js/lecture.js"></script>
+    <script src="../public/js/data.js"></script>
 
 </body>
 
