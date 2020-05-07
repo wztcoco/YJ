@@ -213,7 +213,7 @@
             <div class="yj-act-con-title"><i class="el-icon-sunny
                 "></i> 热门活动</div>
             <el-row :gutter="20" style="margin:0 15px 0 15px">
-                <el-col :xs="12" :sm="6" v-for="item,index in lectureArray" :key="index">
+                <el-col :xs="12" :sm="6" v-for="item,index in recommendArray" :key="index">
                     <div class="grid-content bg-purple" v-on:click="enrollDetail(item.lectureId)">
                         <el-image style="width:100%" :src="item.coverImg"></el-image>
 

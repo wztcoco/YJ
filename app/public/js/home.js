@@ -9,6 +9,7 @@ var instance = axios.create({
 
 var getDataFromServer = function(vmObj){
     var args = {
+            "userId":userId,
             "keyword":"",
             "pageSize":8,
             "today":0,
@@ -19,6 +20,12 @@ var getDataFromServer = function(vmObj){
         console.log(res);
         var res = res.data.obj;
         vmObj.lectureArray=res.searchLectureList;
+    })
+    instance.post('/lecture/getRecommendList',{'args':args})
+    .then(function(res){
+        console.log(res);
+        var res = res.data.obj;
+        vmObj.recommendArray=res.searchLectureList;
     })
 };
 var getTypeFromServer = function(vmObj){

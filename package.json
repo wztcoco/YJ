@@ -23,6 +23,8 @@
     "node-uuid": "^1.4.8",
     "node-xlsx": "^0.14.1",
     "path": "^0.12.7",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.5",
     "stream-to-array": "^2.3.0",
     "stream-wormhole": "^1.1.0",
     "type": "^1.0.1",

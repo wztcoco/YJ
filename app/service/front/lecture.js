@@ -10,6 +10,7 @@ const formidable = require('formidable');
 const path = require('path');
 const moment = require('moment');
 const fs = require('fs');
+const rp = require('request-promise');
 
 class LectureService extends Service {
     //获取讲座详情
@@ -531,6 +532,48 @@ class LectureService extends Service {
         });
         return ctx.helper.getApiResult(constant.apiCode.normal, '插入成功', {});
 
+    }
+
+    async getRecommendList(params){
+        const ctx = this.ctx;
+        const {keyword = "", pageIndex = 1, pageSize = 8, today = 0,userId} = params;
+        const options = {
+            method: 'POST',
+            uri: 'http://127.0.0.1:7776/getRecommend',
+            body: {
+                userId: userId
+            },
+            json: true // Automatically stringifies the body to JSON
+        };
+        let res = await rp(options)
+        const searchObj = {
+            where: {
+                lectureId:res.lecture_list,
+                lectureStatus: 1,
+            },
+            attributes: ['lectureId', 'lectureName', ctx.helper.formatDatabaseTime('participateTime', '%Y-%m-%d %H:%i'),
+                ctx.helper.formatDatabaseTime('endTime', '%Y-%m-%d %H:%i'), 'coverImg', 'speakerName', 'schoolName', 'clickTimes', 'buyTimes'],
+            limit: pageSize,
+            offset: pageSize * (pageIndex - 1),
+            raw: true
+        };
+        if (pageIndex === 0 && pageSize === 0) {
+            delete searchObj.limit;
+            delete searchObj.offset;
+        }
+        if (today == 0) {
+            delete searchObj.where.participateTime;
+        }
+        const searchLectureList = await ctx.model.ViLectureSpeakerTypeBind.findAndCountAll(searchObj);
+        //处理讲座时间
+        underscore.map(searchLectureList.rows, function (item) {
+
+            item.lectureTime = item.participateTime + '-' + moment(item.endTime).toString().substring(16, 21)
+        });
+        let responseObj = {};
+        responseObj.searchLectureList = searchLectureList.rows;
+        responseObj.total = searchLectureList.count;
+        return ctx.helper.getApiResult(constant.apiCode.normal, '查询列表成功', responseObj);
     }
 }
 
